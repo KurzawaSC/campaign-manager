@@ -1,6 +1,8 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatChipGrid } from '@angular/material/chips';
+import { By } from '@angular/platform-browser';
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
 
 import { AccountService } from '../api/account.service';
@@ -80,7 +82,7 @@ describe('CampaignForm', () => {
     const bid = component['form'].controls.bidAmount;
 
     bid.setValue(0.09);
-    expect(component['errorMessage'](bid)).toBe('Must be at least 0.1');
+    expect(component['errorMessage'](bid)).toBe('Must be at least 0.10');
 
     bid.setValue(0.1);
     expect(bid.valid).toBe(true);
@@ -106,6 +108,40 @@ describe('CampaignForm', () => {
     });
     call.flush({ ...campaign, name: 'Summer sale' });
     expect(navigate).toHaveBeenCalledWith('/');
+  });
+
+  it('sends the selected keywords after the chips are rendered', async () => {
+    await setUp(null);
+    vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+    await fixture.whenStable();
+    fillValidForm();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const chipGrid = fixture.debugElement.query(By.directive(MatChipGrid)).componentInstance;
+    chipGrid['_propagateChanges']();
+
+    expect(component['form'].controls.keywordIds.value).toEqual([keyword]);
+    component['save']();
+
+    const call = http.expectOne((request) => request.method === 'POST' && request.url === '/api/campaigns');
+    expect(call.request.body.keywordIds).toEqual([7]);
+    call.flush(campaign);
+  });
+
+  it('shows API errors for nested fields on the parent field', async () => {
+    await setUp(null);
+    fillValidForm();
+
+    component['save']();
+    http
+      .expectOne((request) => request.method === 'POST')
+      .flush(
+        { detail: 'Validation failed', fieldErrors: { 'keywordIds[].<iterable element>': 'must not be null' } },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+    expect(component['errorMessage'](component['form'].controls.keywordIds)).toBe('must not be null');
+    expect(component['saveError']()).toBe('Check the highlighted fields.');
   });
 
   it('shows API field errors on the matching fields', async () => {

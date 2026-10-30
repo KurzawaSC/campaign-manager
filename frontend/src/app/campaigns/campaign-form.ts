@@ -136,7 +136,8 @@ export class CampaignForm implements OnInit {
       return 'This field is required';
     }
     if (errors['min']) {
-      return `Must be at least ${errors['min'].min}`;
+      const min: number = errors['min'].min;
+      return `Must be at least ${Number.isInteger(min) ? min : min.toFixed(2)}`;
     }
     if (errors['maxlength']) {
       return `Must be at most ${errors['maxlength'].requiredLength} characters`;
@@ -179,7 +180,7 @@ export class CampaignForm implements OnInit {
   private showSaveError(error: unknown): void {
     const fieldErrors = Object.entries(toApiProblem(error).fieldErrors ?? {});
     const unmatched = fieldErrors.filter(([field, message]) => {
-      const control = this.form.get(field);
+      const control = this.form.get(field.split(/[.[]/)[0]);
       control?.setErrors({ server: message });
       control?.markAsTouched();
       return !control;
@@ -246,7 +247,7 @@ export class CampaignForm implements OnInit {
     return {
       name: value.name.trim(),
       productId: value.productId!,
-      keywordIds: value.keywordIds.map((keyword) => keyword.id),
+      keywordIds: this.selectedKeywords().map((keyword) => keyword.id),
       bidAmount: value.bidAmount!,
       campaignFund: value.campaignFund!,
       status: value.status,

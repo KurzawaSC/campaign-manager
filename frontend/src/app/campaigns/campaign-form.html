@@ -34,7 +34,7 @@
       <mat-label>Keywords</mat-label>
       <mat-chip-grid #chipGrid formControlName="keywordIds" aria-label="Selected keywords">
         @for (keyword of selectedKeywords(); track keyword.id) {
-          <mat-chip-row (removed)="removeKeyword(keyword)">
+          <mat-chip-row [value]="keyword" (removed)="removeKeyword(keyword)">
             {{ keyword.name }}
             <button matChipRemove [attr.aria-label]="'Remove ' + keyword.name">
               <mat-icon>cancel</mat-icon>
