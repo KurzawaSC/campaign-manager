@@ -80,8 +80,8 @@ public class Campaign {
             Town town,
             Set<Keyword> keywords) {
         this.name = name;
-        this.bidAmount = bidAmount;
-        this.campaignFund = campaignFund;
+        this.bidAmount = bidAmount.setScale(2);
+        this.campaignFund = campaignFund.setScale(2);
         this.status = status;
         this.radiusKm = radiusKm;
         this.product = product;
