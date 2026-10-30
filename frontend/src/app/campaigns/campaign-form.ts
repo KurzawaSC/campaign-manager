@@ -16,7 +16,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, of, startWith, switchMap } from 'rxjs';
 
 import { AccountService } from '../api/account.service';
-import { problemMessage } from '../api/api-problem';
+import { problemMessage, toApiProblem } from '../api/api-problem';
 import { CampaignService } from '../api/campaign.service';
 import { ConfigService } from '../api/config.service';
 import { DictionaryService } from '../api/dictionary.service';
@@ -129,6 +129,9 @@ export class CampaignForm implements OnInit {
 
   protected errorMessage(control: AbstractControl): string {
     const errors: ValidationErrors = control.errors ?? {};
+    if (errors['server']) {
+      return errors['server'];
+    }
     if (errors['required']) {
       return 'This field is required';
     }
@@ -168,9 +171,21 @@ export class CampaignForm implements OnInit {
       },
       error: (error) => {
         this.saving.set(false);
-        this.saveError.set(problemMessage(error));
+        this.showSaveError(error);
       },
     });
+  }
+
+  private showSaveError(error: unknown): void {
+    const fieldErrors = Object.entries(toApiProblem(error).fieldErrors ?? {});
+    const unmatched = fieldErrors.filter(([field, message]) => {
+      const control = this.form.get(field);
+      control?.setErrors({ server: message });
+      control?.markAsTouched();
+      return !control;
+    });
+    const matchedAll = fieldErrors.length > 0 && unmatched.length === 0;
+    this.saveError.set(matchedAll ? 'Check the highlighted fields.' : problemMessage(error));
   }
 
   private load(): void {
