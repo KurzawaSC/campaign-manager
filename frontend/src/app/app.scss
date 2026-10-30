@@ -1,0 +1,44 @@
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  gap: 16px;
+  padding: 0 16px;
+  background: var(--mat-sys-primary-container);
+  color: var(--mat-sys-on-primary-container);
+}
+
+.brand {
+  color: inherit;
+  font: var(--mat-sys-title-large);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: var(--mat-sys-body-large);
+  white-space: nowrap;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+@media (max-width: 600px) {
+  .brand {
+    font: var(--mat-sys-title-medium);
+  }
+
+  .balance-label {
+    display: none;
+  }
+}
