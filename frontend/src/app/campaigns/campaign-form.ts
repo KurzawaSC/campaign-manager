@@ -99,12 +99,15 @@ export class CampaignForm implements OnInit {
   constructor() {
     effect(() => {
       this.availableFunds();
-      this.form.controls.campaignFund.updateValueAndValidity();
+      this.form.controls.campaignFund.updateValueAndValidity({ emitEvent: false });
     });
   }
 
   ngOnInit(): void {
     this.load();
+    this.form.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.saveError.set(null));
     this.keywordQuery.valueChanges
       .pipe(
         filter((value): value is string => typeof value === 'string'),

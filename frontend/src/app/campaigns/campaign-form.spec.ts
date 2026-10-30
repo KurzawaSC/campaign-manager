@@ -174,6 +174,13 @@ describe('CampaignForm', () => {
     await fixture.whenStable();
 
     expect(text()).toContain('Insufficient funds: available 5.00, required 100.00');
+
+    http.expectOne('/api/account').flush({ balance: 5 });
+    await fixture.whenStable();
+    expect(component['saveError']()).not.toBeNull();
+
+    component['form'].controls.campaignFund.setValue(5);
+    expect(component['saveError']()).toBeNull();
   });
 
   it('loads a campaign for editing and counts its fund as available', async () => {

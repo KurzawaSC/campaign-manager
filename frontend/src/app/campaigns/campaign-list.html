@@ -6,9 +6,13 @@
   </a>
 </header>
 
-<mat-form-field class="filter" subscriptSizing="dynamic">
+<mat-form-field class="filter" subscriptSizing="dynamic" floatLabel="always">
   <mat-label>Product</mat-label>
-  <mat-select [value]="productFilter()" (selectionChange)="filterByProduct($event.value)">
+  <mat-select
+    placeholder="All products"
+    [value]="productFilter()"
+    (selectionChange)="filterByProduct($event.value)"
+  >
     <mat-option [value]="null">All products</mat-option>
     @for (product of products(); track product.id) {
       <mat-option [value]="product.id">{{ product.name }}</mat-option>
