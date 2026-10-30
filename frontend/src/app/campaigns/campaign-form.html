@@ -1,0 +1,115 @@
+<header class="page-header">
+  <a matIconButton routerLink="/" aria-label="Back to campaigns">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+  <h1>{{ isEdit ? 'Edit campaign' : 'New campaign' }}</h1>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (loadError(); as message) {
+  <div class="message error" role="alert">
+    <span>{{ message }}</span>
+    <a matButton routerLink="/">Back to campaigns</a>
+  </div>
+} @else {
+  <form class="form" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field class="wide">
+      <mat-label>Campaign name</mat-label>
+      <input matInput formControlName="name" maxlength="255" />
+      <mat-error>{{ errorMessage(form.controls.name) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="wide">
+      <mat-label>Product</mat-label>
+      <mat-select formControlName="productId">
+        @for (product of products(); track product.id) {
+          <mat-option [value]="product.id">{{ product.name }}</mat-option>
+        }
+      </mat-select>
+      <mat-error>{{ errorMessage(form.controls.productId) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="wide">
+      <mat-label>Keywords</mat-label>
+      <mat-chip-grid #chipGrid formControlName="keywordIds" aria-label="Selected keywords">
+        @for (keyword of selectedKeywords(); track keyword.id) {
+          <mat-chip-row (removed)="removeKeyword(keyword)">
+            {{ keyword.name }}
+            <button matChipRemove [attr.aria-label]="'Remove ' + keyword.name">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input
+        #keywordInput
+        placeholder="Type to search"
+        [formControl]="keywordQuery"
+        [matChipInputFor]="chipGrid"
+        [matAutocomplete]="keywordOptions"
+        (keydown.enter)="$event.preventDefault()"
+      />
+      <mat-autocomplete #keywordOptions="matAutocomplete" (optionSelected)="addKeyword($event, keywordInput)">
+        @for (keyword of availableSuggestions(); track keyword.id) {
+          <mat-option [value]="keyword">{{ keyword.name }}</mat-option>
+        }
+      </mat-autocomplete>
+      <mat-hint>Choose at least one from the suggestions</mat-hint>
+      <mat-error>{{ errorMessage(form.controls.keywordIds) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Bid amount</mat-label>
+      <input matInput type="number" formControlName="bidAmount" step="0.01" min="0" />
+      @if (minBid() !== null) {
+        <mat-hint>Minimum {{ minBid() | number: '1.2-2' }}</mat-hint>
+      }
+      <mat-error>{{ errorMessage(form.controls.bidAmount) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Campaign fund</mat-label>
+      <input matInput type="number" formControlName="campaignFund" step="0.01" min="0" />
+      @if (availableFunds() !== null) {
+        <mat-hint>Available {{ availableFunds() | number: '1.2-2' }}</mat-hint>
+      }
+      <mat-error>{{ errorMessage(form.controls.campaignFund) }}</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Town (optional)</mat-label>
+      <mat-select formControlName="townId">
+        <mat-option [value]="null">No town</mat-option>
+        @for (town of towns(); track town.id) {
+          <mat-option [value]="town.id">{{ town.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Radius (km)</mat-label>
+      <input matInput type="number" formControlName="radiusKm" step="1" min="1" />
+      <mat-error>{{ errorMessage(form.controls.radiusKm) }}</mat-error>
+    </mat-form-field>
+
+    <div class="wide status">
+      <span id="status-label">Status</span>
+      <mat-radio-group formControlName="status" aria-labelledby="status-label">
+        <mat-radio-button value="ON">On</mat-radio-button>
+        <mat-radio-button value="OFF">Off</mat-radio-button>
+      </mat-radio-group>
+    </div>
+
+    @if (saveError(); as message) {
+      <div class="wide message error" role="alert">{{ message }}</div>
+    }
+
+    <div class="wide actions">
+      <a matButton routerLink="/">Cancel</a>
+      <button matButton="filled" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving...' : 'Save campaign' }}
+      </button>
+    </div>
+  </form>
+}
