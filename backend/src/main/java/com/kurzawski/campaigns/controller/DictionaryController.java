@@ -11,8 +11,13 @@ import com.kurzawski.campaigns.dto.KeywordResponse;
 import com.kurzawski.campaigns.dto.TownResponse;
 import com.kurzawski.campaigns.service.DictionaryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Dictionaries", description = "Pre-populated keywords and towns")
 public class DictionaryController {
 
     private final DictionaryService dictionaryService;
@@ -22,11 +27,14 @@ public class DictionaryController {
     }
 
     @GetMapping("/keywords")
-    public List<KeywordResponse> findKeywords(@RequestParam(defaultValue = "") String query) {
+    @Operation(summary = "Suggest keywords", description = "Returns up to 20 keywords containing the query, ignoring case.")
+    public List<KeywordResponse> findKeywords(
+            @Parameter(description = "Text typed by the user") @RequestParam(defaultValue = "") String query) {
         return dictionaryService.findKeywords(query);
     }
 
     @GetMapping("/towns")
+    @Operation(summary = "List towns")
     public List<TownResponse> getTowns() {
         return dictionaryService.getTowns();
     }

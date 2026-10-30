@@ -7,8 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kurzawski.campaigns.dto.AccountResponse;
 import com.kurzawski.campaigns.service.AccountService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/account")
+@Tag(name = "Account", description = "Seller's Emerald account")
 public class AccountController {
 
     private final AccountService accountService;
@@ -18,6 +22,7 @@ public class AccountController {
     }
 
     @GetMapping
+    @Operation(summary = "Get the Emerald account balance")
     public AccountResponse getAccount() {
         return accountService.getCurrentAccount();
     }

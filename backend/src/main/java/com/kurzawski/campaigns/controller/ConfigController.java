@@ -7,8 +7,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kurzawski.campaigns.dto.ConfigResponse;
 import com.kurzawski.campaigns.service.ConfigService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/config")
+@Tag(name = "Config", description = "Settings used by the campaign form")
 public class ConfigController {
 
     private final ConfigService configService;
@@ -18,6 +22,7 @@ public class ConfigController {
     }
 
     @GetMapping
+    @Operation(summary = "Get form settings", description = "Returns the minimum bid amount.")
     public ConfigResponse getConfig() {
         return configService.getConfig();
     }

@@ -9,8 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.kurzawski.campaigns.dto.ProductResponse;
 import com.kurzawski.campaigns.service.ProductService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/products")
+@Tag(name = "Products", description = "Seller's products")
 public class ProductController {
 
     private final ProductService productService;
@@ -20,6 +24,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "List the seller's products")
     public List<ProductResponse> getProducts() {
         return productService.getProducts();
     }
