@@ -19,6 +19,10 @@ public class Seller {
     protected Seller() {
     }
 
+    public Seller(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
