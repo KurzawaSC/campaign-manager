@@ -1,0 +1,109 @@
+<header class="page-header">
+  <h1>Campaigns</h1>
+  <a matButton="filled" routerLink="/campaigns/new">
+    <mat-icon>add</mat-icon>
+    New campaign
+  </a>
+</header>
+
+<mat-form-field class="filter" subscriptSizing="dynamic">
+  <mat-label>Product</mat-label>
+  <mat-select [value]="productFilter()" (selectionChange)="filterByProduct($event.value)">
+    <mat-option [value]="null">All products</mat-option>
+    @for (product of products(); track product.id) {
+      <mat-option [value]="product.id">{{ product.name }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+<div class="progress">
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+</div>
+
+@if (error(); as message) {
+  <div class="message error" role="alert">
+    <span>{{ message }}</span>
+    <button matButton (click)="reload()">Try again</button>
+  </div>
+} @else if (loaded() && campaigns().length === 0) {
+  <div class="message">
+    @if (productFilter() === null) {
+      <span>No campaigns yet. Create the first one to start selling.</span>
+    } @else {
+      <span>This product has no campaigns.</span>
+    }
+  </div>
+} @else if (campaigns().length > 0) {
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="campaigns()">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let campaign">{{ campaign.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="product">
+        <th mat-header-cell *matHeaderCellDef>Product</th>
+        <td mat-cell *matCellDef="let campaign">{{ campaign.product.name }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="keywords">
+        <th mat-header-cell *matHeaderCellDef>Keywords</th>
+        <td mat-cell *matCellDef="let campaign">{{ keywordNames(campaign) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="bid">
+        <th mat-header-cell *matHeaderCellDef class="number">Bid</th>
+        <td mat-cell *matCellDef="let campaign" class="number">{{ campaign.bidAmount | number: '1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fund">
+        <th mat-header-cell *matHeaderCellDef class="number">Fund</th>
+        <td mat-cell *matCellDef="let campaign" class="number">{{ campaign.campaignFund | number: '1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let campaign">
+          <span class="status" [class.status-on]="campaign.status === 'ON'">{{ campaign.status }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="town">
+        <th mat-header-cell *matHeaderCellDef>Town</th>
+        <td mat-cell *matCellDef="let campaign">{{ campaign.town?.name ?? '-' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="radius">
+        <th mat-header-cell *matHeaderCellDef class="number">Radius (km)</th>
+        <td mat-cell *matCellDef="let campaign" class="number">{{ campaign.radiusKm }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef><span class="visually-hidden">Actions</span></th>
+        <td mat-cell *matCellDef="let campaign" class="actions">
+          <a
+            matIconButton
+            [routerLink]="['/campaigns', campaign.id, 'edit']"
+            [attr.aria-label]="'Edit ' + campaign.name"
+            matTooltip="Edit"
+          >
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button
+            matIconButton
+            (click)="confirmDelete(campaign)"
+            [attr.aria-label]="'Delete ' + campaign.name"
+            matTooltip="Delete"
+          >
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+  </div>
+}
