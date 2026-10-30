@@ -1,9 +1,12 @@
 package com.kurzawski.campaigns.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.kurzawski.campaigns.dto.AccountResponse;
+import com.kurzawski.campaigns.model.EmeraldAccount;
 import com.kurzawski.campaigns.repository.EmeraldAccountRepository;
 
 @Service
@@ -19,9 +22,22 @@ public class AccountService {
 
     @Transactional(readOnly = true)
     public AccountResponse getCurrentAccount() {
+        return AccountResponse.from(findCurrentAccount());
+    }
+
+    @Transactional
+    public void withdraw(BigDecimal amount) {
+        findCurrentAccount().withdraw(amount);
+    }
+
+    @Transactional
+    public void deposit(BigDecimal amount) {
+        findCurrentAccount().deposit(amount);
+    }
+
+    private EmeraldAccount findCurrentAccount() {
         Long sellerId = currentSellerProvider.getCurrentSeller().getId();
         return accountRepository.findBySellerId(sellerId)
-                .map(AccountResponse::from)
                 .orElseThrow(() -> new IllegalStateException("No Emerald account for seller " + sellerId));
     }
 }

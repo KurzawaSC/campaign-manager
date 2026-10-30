@@ -2,6 +2,8 @@ package com.kurzawski.campaigns.model;
 
 import java.math.BigDecimal;
 
+import com.kurzawski.campaigns.exception.InsufficientFundsException;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -30,6 +32,22 @@ public class EmeraldAccount {
     private Seller seller;
 
     protected EmeraldAccount() {
+    }
+
+    public EmeraldAccount(Seller seller, BigDecimal balance) {
+        this.seller = seller;
+        this.balance = balance;
+    }
+
+    public void withdraw(BigDecimal amount) {
+        if (balance.compareTo(amount) < 0) {
+            throw new InsufficientFundsException(balance, amount);
+        }
+        balance = balance.subtract(amount);
+    }
+
+    public void deposit(BigDecimal amount) {
+        balance = balance.add(amount);
     }
 
     public Long getId() {

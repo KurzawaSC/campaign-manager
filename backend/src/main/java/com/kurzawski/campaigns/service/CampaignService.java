@@ -1,5 +1,6 @@
 package com.kurzawski.campaigns.service;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +29,7 @@ public class CampaignService {
     private final ProductRepository productRepository;
     private final KeywordRepository keywordRepository;
     private final TownRepository townRepository;
+    private final AccountService accountService;
     private final CurrentSellerProvider currentSellerProvider;
 
     public CampaignService(
@@ -35,11 +37,13 @@ public class CampaignService {
             ProductRepository productRepository,
             KeywordRepository keywordRepository,
             TownRepository townRepository,
+            AccountService accountService,
             CurrentSellerProvider currentSellerProvider) {
         this.campaignRepository = campaignRepository;
         this.productRepository = productRepository;
         this.keywordRepository = keywordRepository;
         this.townRepository = townRepository;
+        this.accountService = accountService;
         this.currentSellerProvider = currentSellerProvider;
     }
 
@@ -62,6 +66,7 @@ public class CampaignService {
         Seller seller = currentSellerProvider.getCurrentSeller();
         Campaign campaign = new Campaign(seller);
         applyRequest(campaign, request, seller);
+        accountService.withdraw(campaign.getCampaignFund());
         return CampaignResponse.from(campaignRepository.save(campaign));
     }
 
@@ -69,7 +74,9 @@ public class CampaignService {
     public CampaignResponse updateCampaign(Long id, CampaignRequest request) {
         Seller seller = currentSellerProvider.getCurrentSeller();
         Campaign campaign = findOwnedCampaign(id, seller);
+        BigDecimal previousFund = campaign.getCampaignFund();
         applyRequest(campaign, request, seller);
+        settleFundChange(previousFund, campaign.getCampaignFund());
         return CampaignResponse.from(campaign);
     }
 
@@ -77,7 +84,17 @@ public class CampaignService {
     public void deleteCampaign(Long id) {
         Seller seller = currentSellerProvider.getCurrentSeller();
         Campaign campaign = findOwnedCampaign(id, seller);
+        accountService.deposit(campaign.getCampaignFund());
         campaignRepository.delete(campaign);
+    }
+
+    private void settleFundChange(BigDecimal previousFund, BigDecimal newFund) {
+        BigDecimal difference = newFund.subtract(previousFund);
+        if (difference.signum() > 0) {
+            accountService.withdraw(difference);
+        } else if (difference.signum() < 0) {
+            accountService.deposit(difference.negate());
+        }
     }
 
     private Campaign findOwnedCampaign(Long id, Seller seller) {
