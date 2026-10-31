@@ -1,5 +1,7 @@
 # Campaign Manager
 
+[![CI](https://github.com/KurzawaSC/campaign-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/KurzawaSC/campaign-manager/actions/workflows/ci.yml)
+
 A CRUD application for sellers to manage a campaign for each product they sell. Campaign funds are deducted from the seller's Emerald account, and the new balance is shown on screen.
 
 ## Live demo
@@ -61,6 +63,8 @@ cd backend
 cd frontend
 npm test -- --watch=false
 ```
+
+GitHub Actions runs both test suites and the frontend build for every pull request and every push to `main`.
 
 ## Production build and deployment
 
