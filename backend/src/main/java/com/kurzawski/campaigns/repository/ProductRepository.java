@@ -12,4 +12,8 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findAllBySellerIdOrderByName(Long sellerId);
 
     Optional<Product> findByIdAndSellerId(Long id, Long sellerId);
+
+    boolean existsBySellerIdAndNormalizedName(Long sellerId, String normalizedName);
+
+    boolean existsBySellerIdAndNormalizedNameAndIdNot(Long sellerId, String normalizedName, Long id);
 }
