@@ -66,6 +66,10 @@ npm test -- --watch=false
 | `DELETE /api/campaigns/{id}` | Delete a campaign |
 | `GET /api/account` | Get the Emerald account balance |
 | `GET /api/products` | List the seller's products |
+| `GET /api/products/{id}` | Get a product |
+| `POST /api/products` | Create a product |
+| `PUT /api/products/{id}` | Edit a product |
+| `DELETE /api/products/{id}` | Delete a product that has no campaigns |
 | `GET /api/towns` | List towns |
 | `GET /api/keywords?query=` | Suggest keywords |
 | `GET /api/config` | Get form settings, such as the minimum bid |
@@ -75,8 +79,8 @@ Errors use the Problem Details format (RFC 9457):
 | Status | Meaning |
 |---|---|
 | `400` | Invalid data, with per-field messages in `fieldErrors` |
-| `404` | Campaign not found |
-| `409` | Insufficient funds, or the data was changed by another request |
+| `404` | Campaign or product not found |
+| `409` | Insufficient funds, a duplicate product name, a product that still has campaigns, or data changed by another request |
 
 ## Assumptions
 
@@ -88,6 +92,8 @@ The task left some points open, so these decisions were made:
 4. **Keywords:** they come only from the pre-populated dictionary, and a campaign needs at least one.
 5. **Town and radius:** the town is optional, and the radius is required and greater than 0, as the task specifies.
 6. **Campaign fund:** it is deducted when a campaign is created. Editing it deducts or refunds the difference, and deleting a campaign refunds the whole fund, because the application does not simulate spending. Changing the status does not affect the balance.
+7. **Products:** the task mentions products but gives no fields, so a product has only a name, unique for the seller regardless of case. Sellers can create, edit and delete products, and the application starts with five example products.
+8. **Deleting a product:** a product with any campaign cannot be deleted, including a campaign with status OFF, because that campaign still holds funds. The seller deletes its campaigns first, which refunds their funds.
 
 ## Design notes
 
