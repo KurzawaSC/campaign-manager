@@ -9,19 +9,26 @@ import org.springframework.transaction.annotation.Transactional;
 import com.kurzawski.campaigns.dto.ProductRequest;
 import com.kurzawski.campaigns.dto.ProductResponse;
 import com.kurzawski.campaigns.exception.DuplicateProductNameException;
+import com.kurzawski.campaigns.exception.ProductInUseException;
 import com.kurzawski.campaigns.exception.ProductNotFoundException;
 import com.kurzawski.campaigns.model.Product;
 import com.kurzawski.campaigns.model.Seller;
+import com.kurzawski.campaigns.repository.CampaignRepository;
 import com.kurzawski.campaigns.repository.ProductRepository;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CampaignRepository campaignRepository;
     private final CurrentSellerProvider currentSellerProvider;
 
-    public ProductService(ProductRepository productRepository, CurrentSellerProvider currentSellerProvider) {
+    public ProductService(
+            ProductRepository productRepository,
+            CampaignRepository campaignRepository,
+            CurrentSellerProvider currentSellerProvider) {
         this.productRepository = productRepository;
+        this.campaignRepository = campaignRepository;
         this.currentSellerProvider = currentSellerProvider;
     }
 
@@ -70,7 +77,15 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long id) {
         Product product = findOwnedProduct(id, currentSellerProvider.getCurrentSeller());
-        productRepository.delete(product);
+        if (campaignRepository.existsByProductId(id)) {
+            throw new ProductInUseException(product.getName());
+        }
+        try {
+            productRepository.delete(product);
+            productRepository.flush();
+        } catch (DataIntegrityViolationException ex) {
+            throw new ProductInUseException(product.getName());
+        }
     }
 
     private Product findOwnedProduct(Long id, Seller seller) {

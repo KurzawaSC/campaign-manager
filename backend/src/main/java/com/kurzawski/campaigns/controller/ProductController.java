@@ -77,9 +77,10 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete a product")
+    @Operation(summary = "Delete a product", description = "A product with any campaign, ON or OFF, cannot be deleted.")
     @ApiResponse(responseCode = "204", description = "Product deleted")
     @ApiResponse(responseCode = "404", description = "Product not found")
+    @ApiResponse(responseCode = "409", description = "The product has campaigns")
     public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }

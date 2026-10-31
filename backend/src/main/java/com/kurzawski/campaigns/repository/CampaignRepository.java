@@ -18,4 +18,6 @@ public interface CampaignRepository extends JpaRepository<Campaign, Long> {
 
     @EntityGraph(attributePaths = {"product", "town", "keywords"})
     Optional<Campaign> findByIdAndSellerId(Long id, Long sellerId);
+
+    boolean existsByProductId(Long productId);
 }
