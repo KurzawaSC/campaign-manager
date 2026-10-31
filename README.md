@@ -92,8 +92,9 @@ The task left some points open, so these decisions were made:
 4. **Keywords:** they come only from the pre-populated dictionary, and a campaign needs at least one.
 5. **Town and radius:** the town is optional, and the radius is required and greater than 0, as the task specifies.
 6. **Campaign fund:** it is deducted when a campaign is created. Editing it deducts or refunds the difference, and deleting a campaign refunds the whole fund, because the application does not simulate spending. Changing the status does not affect the balance.
-7. **Products:** the task mentions products but gives no fields, so a product has only a name, unique for the seller regardless of case. Sellers can create, edit and delete products, and the application starts with five example products.
+7. **Products:** the task mentions products but gives no fields, so a product has only a name, unique for the seller regardless of case. Sellers can create, edit and delete products.
 8. **Deleting a product:** a product with any campaign cannot be deleted, including a campaign with status OFF, because that campaign still holds funds. The seller deletes its campaigns first, which refunds their funds.
+9. **Seed data:** the application starts with 24 example products typical of Christmas campaigns, 474 keywords matching them, and the 18 Polish voivodeship capitals as towns. Town names use their English, ASCII spelling, like the rest of the data.
 
 ## Design notes
 
