@@ -76,7 +76,9 @@ public class ProductService {
 
     @Transactional
     public void deleteProduct(Long id) {
-        Product product = findOwnedProduct(id, currentSellerProvider.getCurrentSeller());
+        Long sellerId = currentSellerProvider.getCurrentSeller().getId();
+        Product product = productRepository.findForUpdateByIdAndSellerId(id, sellerId)
+                .orElseThrow(() -> new ProductNotFoundException(id));
         if (campaignRepository.existsByProductId(id)) {
             throw new ProductInUseException(product.getName());
         }

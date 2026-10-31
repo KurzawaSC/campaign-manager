@@ -134,4 +134,5 @@ The task left some points open, so these decisions were made:
 ## Design notes
 
 - **Balance consistency:** each balance change runs in one transaction with the campaign change. Optimistic locking (`@Version`) on the account and the campaign rejects concurrent changes with `409`.
+- **Product deletion rule:** creating or editing a campaign and deleting a product both lock the product row, so a product cannot be deleted while a campaign for it is being saved.
 - **Adding login later:** services get the current user only through `CurrentSellerProvider`, API paths contain no seller ID, and data queries are scoped to the seller. Adding login means replacing the `CurrentSellerProvider` implementation and adding an HTTP interceptor to the frontend.
