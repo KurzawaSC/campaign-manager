@@ -55,6 +55,30 @@ cd frontend
 npm test -- --watch=false
 ```
 
+## Production build and deployment
+
+The `production` Maven profile builds the Angular app and packages it into the Spring Boot JAR, so one process serves the API and the frontend at one address. Local development does not use this profile.
+
+```bash
+cd backend
+./mvnw clean package -Pproduction
+SPRING_PROFILES_ACTIVE=production java -jar target/campaigns-0.0.1-SNAPSHOT.jar
+```
+
+The application is then available at http://localhost:8080. The `production` Spring profile turns off the H2 console.
+
+To deploy it to Azure App Service with the Azure CLI, replace the placeholders and use a region your subscription allows:
+
+```bash
+az group create -n <resource-group> -l <region>
+az appservice plan create -g <resource-group> -n <plan> --is-linux --sku F1
+az webapp create -g <resource-group> -p <plan> -n <app-name> --runtime "JAVA:21-java21"
+az webapp config appsettings set -g <resource-group> -n <app-name> --settings SPRING_PROFILES_ACTIVE=production
+az webapp deploy -g <resource-group> -n <app-name> --src-path backend/target/campaigns-0.0.1-SNAPSHOT.jar --type jar
+```
+
+The database is in memory, so data returns to the seed state whenever the app restarts.
+
 ## API
 
 | Method and path | Description |
