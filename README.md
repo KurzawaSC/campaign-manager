@@ -2,6 +2,13 @@
 
 A CRUD application for sellers to manage a campaign for each product they sell. Campaign funds are deducted from the seller's Emerald account, and the new balance is shown on screen.
 
+## Live demo
+
+- **Application:** https://campaign-manager-kurzawski.azurewebsites.net
+- **API docs (Swagger):** https://campaign-manager-kurzawski.azurewebsites.net/swagger-ui.html
+
+The demo runs on a free Azure plan, so the first visit after a period of inactivity can take a few minutes while the app wakes up. It uses an in-memory database shared by all visitors, and the data returns to its initial state after each restart.
+
 ## Tech stack
 
 - **Backend:** Java 21, Spring Boot 4 (Web MVC, Data JPA, Validation), Maven
