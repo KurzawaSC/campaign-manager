@@ -310,9 +310,9 @@ class CampaignApiTest {
         mockMvc.perform(get("/api/products")).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").exists());
         mockMvc.perform(get("/api/towns")).andExpect(status().isOk()).andExpect(jsonPath("$[0].name").exists());
         mockMvc.perform(get("/api/config")).andExpect(jsonPath("$.minBidAmount").value(0.10));
-        mockMvc.perform(get("/api/keywords").param("query", "WIRE"))
+        mockMvc.perform(get("/api/keywords").param("query", "DREAMHOUSE"))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name").value("wireless"));
+                .andExpect(jsonPath("$[0].name").value("barbie dreamhouse"));
     }
 
     private Long createCampaign(String fund) throws Exception {
