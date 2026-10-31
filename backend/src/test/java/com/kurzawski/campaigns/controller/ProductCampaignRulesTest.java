@@ -122,7 +122,7 @@ class ProductCampaignRulesTest {
 
     @Test
     void campaignAndProductDeleteRacingNeverBreakTheRule() throws Exception {
-        for (int round = 0; round < 15; round++) {
+        for (int round = 0; round < 200; round++) {
             Long product = createProduct("Race Mug " + round);
             String body = campaignBody(product, "ON", "10.00");
             CountDownLatch start = new CountDownLatch(1);

@@ -115,7 +115,7 @@ public class CampaignService {
     }
 
     private Product findProduct(Long productId, Seller seller) {
-        return productRepository.findByIdAndSellerId(productId, seller.getId())
+        return productRepository.findForUpdateByIdAndSellerId(productId, seller.getId())
                 .orElseThrow(() -> new InvalidReferenceException("productId", "Product " + productId + " not found"));
     }
 
