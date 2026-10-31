@@ -1,0 +1,34 @@
+<header class="page-header">
+  <a matIconButton routerLink="/products" aria-label="Back to products">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+  <h1>{{ isEdit ? 'Edit product' : 'New product' }}</h1>
+</header>
+
+@if (loading()) {
+  <mat-progress-bar mode="indeterminate" />
+} @else if (loadError(); as message) {
+  <div class="message" role="alert">
+    <span>{{ message }}</span>
+    <a matButton routerLink="/products">Back to products</a>
+  </div>
+} @else {
+  <form class="form" [formGroup]="form" (ngSubmit)="save()">
+    <mat-form-field>
+      <mat-label>Product name</mat-label>
+      <input matInput formControlName="name" maxlength="255" />
+      <mat-error>{{ nameError() }}</mat-error>
+    </mat-form-field>
+
+    @if (saveError(); as message) {
+      <div class="message" role="alert">{{ message }}</div>
+    }
+
+    <div class="actions">
+      <a matButton routerLink="/products">Cancel</a>
+      <button matButton="filled" type="submit" [disabled]="saving()">
+        {{ saving() ? 'Saving...' : 'Save product' }}
+      </button>
+    </div>
+  </form>
+}

@@ -27,6 +27,18 @@
   white-space: nowrap;
 }
 
+.nav {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--mat-sys-surface-container);
+}
+
+.active {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
+}
+
 .content {
   max-width: 1200px;
   margin: 0 auto;

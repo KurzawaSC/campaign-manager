@@ -27,6 +27,9 @@
           <mat-option [value]="product.id">{{ product.name }}</mat-option>
         }
       </mat-select>
+      @if (products().length === 0) {
+        <mat-hint>No products yet. <a routerLink="/products/new">Add a product</a> first.</mat-hint>
+      }
       <mat-error>{{ errorMessage(form.controls.productId) }}</mat-error>
     </mat-form-field>
 

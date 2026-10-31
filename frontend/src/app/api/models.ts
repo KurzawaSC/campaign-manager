@@ -5,6 +5,10 @@ export interface Product {
   name: string;
 }
 
+export interface ProductRequest {
+  name: string;
+}
+
 export interface Keyword {
   id: number;
   name: string;

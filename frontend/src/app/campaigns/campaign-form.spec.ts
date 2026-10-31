@@ -65,6 +65,28 @@ describe('CampaignForm', () => {
     return (fixture.nativeElement as HTMLElement).textContent ?? '';
   }
 
+  it('links to adding a product when there are none', async () => {
+    await TestBed.configureTestingModule({
+      imports: [CampaignForm],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({}) } } },
+      ],
+    }).compileComponents();
+    http = TestBed.inject(HttpTestingController);
+    fixture = TestBed.createComponent(CampaignForm);
+    fixture.detectChanges();
+    http.expectOne('/api/products').flush([]);
+    http.expectOne('/api/towns').flush([]);
+    http.expectOne('/api/config').flush({ minBidAmount: 0.1 });
+    await fixture.whenStable();
+
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('mat-hint a')?.getAttribute('href')).toBe('/products/new');
+  });
+
   it('does not send an invalid form and marks required fields', async () => {
     await setUp(null);
 
