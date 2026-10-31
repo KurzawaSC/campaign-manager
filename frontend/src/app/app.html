@@ -1,21 +1,23 @@
-<mat-toolbar class="toolbar">
-  <a class="brand" routerLink="/">Campaign Manager</a>
-  <span class="spacer"></span>
-  <div class="balance" aria-live="polite">
-    <mat-icon aria-hidden="true">account_balance_wallet</mat-icon>
-    <span class="balance-label">Emerald balance</span>
-    @if (balance() !== null) {
-      <strong data-testid="balance">{{ balance() | number: '1.2-2' }}</strong>
-    } @else {
-      <strong>unavailable</strong>
-    }
-  </div>
-</mat-toolbar>
+<header class="app-header">
+  <div class="app-header-inner">
+    <a class="brand" routerLink="/">Campaign Manager</a>
 
-<nav class="nav" aria-label="Main">
-  <a matButton routerLink="/campaigns" routerLinkActive="active">Campaigns</a>
-  <a matButton routerLink="/products" routerLinkActive="active">Products</a>
-</nav>
+    <nav class="nav" aria-label="Main">
+      <a class="nav-link" routerLink="/campaigns" routerLinkActive="active">Campaigns</a>
+      <a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a>
+    </nav>
+
+    <div class="balance" aria-live="polite">
+      <mat-icon aria-hidden="true">account_balance_wallet</mat-icon>
+      <span class="balance-label">Emerald balance</span>
+      @if (balance() !== null) {
+        <strong data-testid="balance">{{ balance() | number: '1.2-2' }}</strong>
+      } @else {
+        <strong>unavailable</strong>
+      }
+    </div>
+  </div>
+</header>
 
 <main class="content">
   <router-outlet />
