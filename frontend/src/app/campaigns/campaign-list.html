@@ -40,11 +40,11 @@
     }
   </div>
 } @else if (campaigns().length > 0) {
-  <div class="table-wrapper">
+  <div class="table-wrapper card">
     <table mat-table [dataSource]="campaigns()">
       <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let campaign">{{ campaign.name }}</td>
+        <td mat-cell *matCellDef="let campaign" class="name-cell">{{ campaign.name }}</td>
       </ng-container>
 
       <ng-container matColumnDef="product">
